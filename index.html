@@ -1,161 +1,513 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CodeCrash Arena</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeCrash Arena Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
+    :root{
+      --bg1:#050816;
+      --bg2:#0b1226;
+      --border:rgba(255,255,255,.10);
     }
-
+    html,body{height:100%}
     body{
-      background:#32b580;
-      color:rgb(236, 231, 231);
-      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(168,85,247,.14), transparent 28%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      color:#e5e7eb;
     }
-
-    header{
-      background:#283c5c;
-      padding:20px;
-      text-align:center;
-      box-shadow:0 2px 10px rgba(0,0,0,0.5);
+    .glass{
+      background:rgba(15,23,42,.72);
+      border:1px solid var(--border);
+      box-shadow:0 20px 80px rgba(0,0,0,.35);
+      backdrop-filter: blur(12px);
     }
-
-    header h1{
-      font-size:40px;
-      color:#38bdf8;
+    .grid-bg{
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+      background-position: center;
     }
-
-    header p{
-      margin-top:10px;
-      color:#cbd5e1;
+    .pulse{
+      animation:pulseGlow 2.8s ease-in-out infinite;
     }
-
-    .container{
-      width:90%;
-      max-width:1000px;
-      margin:auto;
-      padding:40px 0;
+    @keyframes pulseGlow{
+      0%,100%{ transform:translateY(0); box-shadow:0 0 0 rgba(59,130,246,.0);}
+      50%{ transform:translateY(-2px); box-shadow:0 0 35px rgba(59,130,246,.18);}
     }
-
-    .card{
-      background:#253651;
-      padding:25px;
-      border-radius:15px;
-      margin-bottom:30px;
-      transition:0.3s;
-    }
-
-    .card:hover{
-      transform:translateY(-5px);
-      box-shadow:0 0 20px rgba(56,189,248,0.3);
-    }
-
-    h2{
-      margin-bottom:15px;
-      color:#38bdf8;
-    }
-
-    .code-box{
-      background:#0f172a;
-      padding:20px;
-      border-radius:10px;
-      overflow-x:auto;
-      margin-top:15px;
-      color:#22c55e;
-    }
-
-    button{
-      margin-top:20px;
-      padding:12px 25px;
-      border:none;
-      border-radius:8px;
-      background:#38bdf8;
-      color:black;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.3s;
-    }
-
-    button:hover{
-      background:white;
-    }
-
-    #result{
-      margin-top:20px;
-      font-size:20px;
-      font-weight:bold;
-    }
-
-    footer{
-      text-align:center;
-      padding:20px;
-      background:#1e293b;
-      color:#94a3b8;
-    }
+    .fade-in{animation:fadeIn .5s ease both;}
+    @keyframes fadeIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
+    .option:hover{transform:translateY(-2px)}
+    .option.selected{border-color:#38bdf8; background:rgba(14,165,233,.16)}
+    .option.correct{border-color:#22c55e; background:rgba(34,197,94,.14)}
+    .option.wrong{border-color:#ef4444; background:rgba(239,68,68,.14)}
   </style>
 </head>
-
-<body>
-
-  <header>
-    <h1>CodeCrash Arena</h1>
-    <p>Fix Bugs • Practice Coding • Improve Logic</p>
-  </header>
-
-  <div class="container">
-
-    <div class="card">
-      <h2>Bug Challenge #1</h2>
-
-      <p>Find the bug in this JavaScript code:</p>
-
-      <div class="code-box">
-<pre>
-let number = 10;
-
-if(number = 10){
-   console.log("Correct");
-}
-</pre>
-      </div>
-
-      <button onclick="showAnswer()">Show Answer</button>
-
-      <div id="result"></div>
-    </div>
-
-    <div class="card">
-      <h2>Project Features</h2>
-
-      <ul>
-        <li>✔ Interactive Bug Challenges</li>
-        <li>✔ Modern Dark UI</li>
-        <li>✔ Beginner Friendly</li>
-        <li>✔ GitHub Ready</li>
-        <li>✔ Responsive Design</li>
-      </ul>
-    </div>
-
-  </div>
-
-  <footer>
-    Made By Shravan 🚀
-     <p>This is my first repository.</p>
-  </footer>
+<body class="min-h-screen text-slate-100">
+  <div class="fixed inset-0 grid-bg opacity-60 pointer-events-none"></div>
+  <div id="app" class="relative z-10"></div>
 
   <script>
-    function showAnswer(){
+    const LANGS = [
+      { key:'python', name:'Python', desc:'Practice syntax, logic, and problem solving.', badge:'🐍 Python Master' },
+      { key:'java', name:'Java', desc:'Test your OOP, collections, and core concepts.', badge:'☕ Java Expert' },
+      { key:'cpp', name:'C++', desc:'Compile your speed with pointers and STL.', badge:'⚡ C++ Warrior' },
+      { key:'php', name:'PHP', desc:'Strengthen backend and web logic skills.', badge:'🌐 PHP Hacker' },
+      { key:'c', name:'C', desc:'Master fundamentals, memory, and structures.', badge:'🔷 C Champion' },
+    ];
 
-      document.getElementById("result").innerHTML =
-      "Bug Found ✅ <br><br> Correct Code:<br><br> if(number == 10)";
+    const QUESTIONS = {
+      python: [
+        {q:'What is the output? print(type([]))', o:['<class "list">','<type "list">','list','array'], a:0, e:'type([]) returns the list type.'},
+        {q:'Which keyword is used to define a function?', o:['fun','def','function','lambda'], a:1, e:'def is used to define a function.'},
+        {q:'What does len("Code") return?', o:['3','4','5','Error'], a:1, e:'len() counts characters in the string.'},
+        {q:'Which of these is immutable?', o:['list','dict','set','tuple'], a:3, e:'Tuples cannot be changed after creation.'},
+        {q:'What is the result of 2 ** 3 ?', o:['6','8','9','5'], a:1, e:'** means exponentiation.'},
+        {q:'Which method adds an item to a list?', o:['append()','add()','push()','insertItem()'], a:0, e:'append() adds one element to the end of a list.'},
+        {q:'What is a correct way to create a set?', o:['{}','set()','[]','()'], a:1, e:'set() creates an empty set.'},
+        {q:'What symbol starts a comment in Python?', o:['//','#','/*','--'], a:1, e:'# is used for comments in Python.'},
+        {q:'What does range(5) produce?', o:['1 to 5','0 to 4','0 to 5','5 numbers starting from 1'], a:1, e:'range(5) starts from 0 and ends at 4.'},
+        {q:'Which is a valid variable name?', o:['2name','my-name','my_name','my name'], a:2, e:'Underscores are valid in variable names.'},
+        {q:'What is the output? print(10 // 3)', o:['3.33','3','4','2'], a:1, e:'// performs floor division.'},
+        {q:'Which data type stores key-value pairs?', o:['list','tuple','dict','set'], a:2, e:'Dictionaries store key-value pairs.'},
+        {q:'What keyword is used for looping over a sequence?', o:['loop','for','iterate','repeat'], a:1, e:'for is the standard loop keyword.'},
+        {q:'What is the output? print(bool(0))', o:['True','False','0','Error'], a:1, e:'0 is falsy, so bool(0) is False.'},
+        {q:'Which module is used for random numbers?', o:['random','math','os','sys'], a:0, e:'random provides random functions.'},
+        {q:'What is the output? print("Hi"*3)', o:['HiHiHi','Hi3','Error','3Hi'], a:0, e:'Strings can be repeated with *.'},
+        {q:'Which one is a Python tuple?', o:['[1,2]','{1,2}','(1,2)','<1,2>'], a:2, e:'Tuples use parentheses.'},
+        {q:'How do you import a module named math?', o:['include math','import math','using math','require math'], a:1, e:'import math is correct.'},
+        {q:'What is the output? print(5 == 5.0)', o:['True','False','Error','None'], a:0, e:'Numeric equality compares values.'},
+        {q:'Which statement handles exceptions?', o:['catch','try/except','error/handle','fix/except'], a:1, e:'try/except is used for exception handling.'},
+      ],
+      java: [
+        {q:'Which method is the entry point in Java?', o:['start()','main()','run()','init()'], a:1, e:'main() is the entry point.'},
+        {q:'Which package is imported by default?', o:['java.util','java.lang','java.io','none'], a:1, e:'java.lang is imported automatically.'},
+        {q:'Which keyword creates an object?', o:['new','class','this','void'], a:0, e:'new creates objects.'},
+        {q:'What is the size of int in Java?', o:['8-bit','16-bit','32-bit','64-bit'], a:2, e:'int is 32-bit.'},
+        {q:'Which is not a Java access modifier?', o:['public','private','protected','package'], a:3, e:'package is not a keyword access modifier.'},
+        {q:'What does JVM stand for?', o:['Java Variable Machine','Java Virtual Machine','Joint Virtual Module','Java Verified Method'], a:1, e:'JVM means Java Virtual Machine.'},
+        {q:'Which collection does not allow duplicates?', o:['List','Queue','Set','ArrayList'], a:2, e:'Set does not allow duplicate elements.'},
+        {q:'Which keyword is used to inherit a class?', o:['implements','extends','inherits','super'], a:1, e:'extends is used for class inheritance.'},
+        {q:'What is String in Java?', o:['Primitive type','Class','Interface','Method'], a:1, e:'String is a class.'},
+        {q:'Which loop is best when iterations are known?', o:['for','do-while','while','foreach only'], a:0, e:'for loop is ideal for known iterations.'},
+        {q:'Which is used for exceptions?', o:['try/catch','if/else','switch','break'], a:0, e:'try/catch handles exceptions.'},
+        {q:'Can a Java class extend multiple classes?', o:['Yes','No','Only abstract classes','Only interfaces'], a:1, e:'Java does not support multiple class inheritance.'},
+        {q:'What does == compare for objects?', o:['Content','Reference','Length','Hash only'], a:1, e:'== compares references for objects.'},
+        {q:'Which is a non-primitive type?', o:['int','double','boolean','String'], a:3, e:'String is a reference type.'},
+        {q:'What is autoboxing?', o:['Convert object to primitive','Convert primitive to object','Compile code','Run code'], a:1, e:'Autoboxing converts primitive to wrapper objects.'},
+        {q:'What is the output of System.out.println(5/2); ?', o:['2.5','2','3','Error'], a:1, e:'Integer division returns 2.'},
+        {q:'Which keyword prevents overriding?', o:['static','final','private','abstract'], a:1, e:'final prevents method overriding.'},
+        {q:'Which interface is used for sorting collections?', o:['Comparable','Runnable','Serializable','Cloneable'], a:0, e:'Comparable defines natural ordering.'},
+        {q:'What does super refer to?', o:['Current object','Parent class','Static block','Package'], a:1, e:'super refers to the parent class.'},
+        {q:'Which statement exits a loop?', o:['stop','exit','break','leave'], a:2, e:'break exits a loop.'},
+      ],
+      cpp: [
+        {q:'Which header is commonly used for input/output?', o:['stdio.h','iostream','stdlib','conio.h'], a:1, e:'iostream is used for C++ streams.'},
+        {q:'Which operator is used to access members via pointer?', o:['.','->','::','*'], a:1, e:'-> is used with pointers to access members.'},
+        {q:'What is the output? cout << 5/2;', o:['2.5','2','3','Error'], a:1, e:'Integer division gives 2.'},
+        {q:'Which is used to define a class?', o:['struct','class','object','template'], a:1, e:'class defines a class.'},
+        {q:'What does STL stand for?', o:['Standard Template Library','System Template Loop','Standard Type Link','Simple Template List'], a:0, e:'STL means Standard Template Library.'},
+        {q:'Which container stores unique ordered keys?', o:['vector','set','list','stack'], a:1, e:'set stores unique ordered keys.'},
+        {q:'Which keyword is used for constant variables?', o:['const','final','static','immutable'], a:0, e:'const marks constant variables.'},
+        {q:'Which operator allocates memory?', o:['malloc','new','alloc','create'], a:1, e:'new allocates memory in C++.'},
+        {q:'Which is a valid C++ comment?', o:['// comment','<!-- comment -->','# comment','** comment **'], a:0, e:'// is a valid single-line comment.'},
+        {q:'What is function overloading?', o:['Same name, different params','Same name, same params','Different name, same params','None'], a:0, e:'Same function name with different parameters.'},
+        {q:'Which keyword is used for inheritance?', o:['inherits','extends',':','super'], a:2, e:': is used in class inheritance syntax.'},
+        {q:'What is the size of bool?', o:['1 byte','2 bytes','4 bytes','Depends, but usually 1 byte'], a:3, e:'bool size can vary, usually 1 byte.'},
+        {q:'Which loop checks condition first?', o:['do-while','while','repeat-until','for each'], a:1, e:'while checks the condition before each iteration.'},
+        {q:'Which is not a C++ access specifier?', o:['public','private','protected','global'], a:3, e:'global is not an access specifier.'},
+        {q:'What is the output? cout << (2==2);', o:['0','1','true','false'], a:1, e:'true prints as 1 by default.'},
+        {q:'Which keyword defines a namespace?', o:['namespace','space','using','scope'], a:0, e:'namespace defines a namespace.'},
+        {q:'Which is used for dynamic arrays?', o:['vector','map','set','queue'], a:0, e:'vector is commonly used for dynamic arrays.'},
+        {q:'What does nullptr mean?', o:['Zero','Null pointer','Undefined','Invalid'], a:1, e:'nullptr represents a null pointer.'},
+        {q:'Which is used to sort a vector?', o:['sort()','order()','rank()','arrange()'], a:0, e:'sort() sorts a vector.'},
+        {q:'What is polymorphism?', o:['Many forms','One form','No forms','Memory management'], a:0, e:'Polymorphism means many forms.'},
+      ],
+      php: [
+        {q:'PHP files usually end with which extension?', o:['.php','.html','.js','.css'], a:0, e:'PHP files end with .php.'},
+        {q:'Which symbol starts a variable in PHP?', o:['$','#','@','%'], a:0, e:'Variables start with $.'},
+        {q:'Which function prints output in PHP?', o:['echo','printout','printfn','write'], a:0, e:'echo prints output.'},
+        {q:'What does . represent in PHP?', o:['Concatenation','Division','Exponent','Assignment'], a:0, e:'Dot is used for string concatenation.'},
+        {q:'Which superglobal holds form data sent via POST?', o:['$_GET','$_POST','$_SESSION','$_COOKIE'], a:1, e:'$_POST stores POST data.'},
+        {q:'Which is used to include a file once?', o:['include_once','require_all','once_include','single_include'], a:0, e:'include_once includes a file only once.'},
+        {q:'What is the correct way to start PHP code?', o:['<php>','<?php','<?','<script php>'], a:1, e:'<?php starts PHP code.'},
+        {q:'Which is a PHP loop?', o:['for','repeat','cycle','iterate'], a:0, e:'for is a PHP loop.'},
+        {q:'How do you end a statement in PHP?', o:['.',';',':','!'], a:1, e:'PHP statements end with semicolons.'},
+        {q:'Which function counts array elements?', o:['count()','sizeofarray()','len()','size()'], a:0, e:'count() returns array length.'},
+        {q:'Which array type uses keys and values?', o:['Indexed only','Associative','Nested only','Flat only'], a:1, e:'Associative arrays use keys and values.'},
+        {q:'Which operator checks value and type?', o:['==','===','!=','<>'], a:1, e:'=== checks both value and type.'},
+        {q:'What is used to handle errors?', o:['try/catch','handle/error','fix/catch','if/error'], a:0, e:'try/catch handles exceptions.'},
+        {q:'Which function returns current date?', o:['date()','today()','now()','timeDate()'], a:0, e:'date() can return the current date.'},
+        {q:'Which keyword defines a class?', o:['class','object','module','struct'], a:0, e:'class defines a class.'},
+        {q:'What is the output? echo 2 + "3";', o:['5','23','Error','2'], a:0, e:'PHP converts the string to a number.'},
+        {q:'Which is used for session start?', o:['start_session()','session_begin()','session_start()','init_session()'], a:2, e:'session_start() begins a session.'},
+        {q:'Which is a comparison operator?', o:['=','==','+=','&&'], a:1, e:'== compares values.'},
+        {q:'Which function removes last array element?', o:['array_pop()','array_remove()','pop_array()','unset_last()'], a:0, e:'array_pop() removes the last item.'},
+        {q:'What is inheritance in PHP OOP?', o:['Child class gets parent properties','Two variables same name','Database connect','File upload'], a:0, e:'Child classes inherit properties and methods.'},
+      ],
+      c: [
+        {q:'Which function is used to print output?', o:['printf','print','scan','echo'], a:0, e:'printf is commonly used for formatted output.'},
+        {q:'Which header is needed for printf?', o:['stdio.h','conio.h','math.h','string.h'], a:0, e:'stdio.h contains printf.'},
+        {q:'What is the size of char?', o:['1 byte','2 bytes','4 bytes','8 bytes'], a:0, e:'char is usually 1 byte.'},
+        {q:'Which operator is used to get address?', o:['*','&','->','::'], a:1, e:'& gives the address of a variable.'},
+        {q:'Which is used to declare a pointer?', o:['int p','int *p','pointer int p','*int p'], a:1, e:'int *p declares a pointer.'},
+        {q:'What does NULL represent?', o:['Zero','No address','Only true','End of file'], a:1, e:'NULL means a pointer with no valid address.'},
+        {q:'Which loop is guaranteed to run at least once?', o:['for','while','do-while','foreach'], a:2, e:'do-while executes at least once.'},
+        {q:'Which keyword defines a constant?', o:['const','final','let','static'], a:0, e:'const defines a constant value.'},
+        {q:'Which is used for string handling?', o:['string.h','stdio.h','math.h','stdlib.h'], a:0, e:'string.h provides string functions.'},
+        {q:'What is the output? printf("%d", 5/2);', o:['2.5','2','3','Error'], a:1, e:'Integer division returns 2.'},
+        {q:'Which operator compares equality?', o:['=','==','!=','<='], a:1, e:'== compares equality.'},
+        {q:'What is an array?', o:['A single variable','Collection of same type elements','Only characters','Only pointers'], a:1, e:'An array stores same-type elements.'},
+        {q:'Which keyword returns from function?', o:['stop','return','exit','back'], a:1, e:'return sends a value back from a function.'},
+        {q:'Which is a valid comment?', o:['// comment','<!-- comment -->','** comment **','## comment'], a:0, e:'// is a valid comment in C.'},
+        {q:'What is the size of int?', o:['Depends on compiler','Always 1 byte','Always 8 bytes','Always 16 bytes'], a:0, e:'int size depends on compiler/platform.'},
+        {q:'Which function allocates memory dynamically?', o:['malloc','alloc','new','create'], a:0, e:'malloc allocates memory dynamically.'},
+        {q:'What does ++ do?', o:['Decrement','Increment','Multiply','Divide'], a:1, e:'++ increments a value.'},
+        {q:'Which is a storage class?', o:['auto','fast','staticify','dynamic'], a:0, e:'auto is a storage class.'},
+        {q:'Which symbol terminates a statement?', o:[',','.',';','!'], a:2, e:'Statements end with semicolons.'},
+        {q:'What is recursion?', o:['Function calling itself','Loop inside loop','Array inside array','Pointer arithmetic'], a:0, e:'Recursion is a function calling itself.'},
+      ]
+    };
+
+    const state = { lang:null, questions:[], current:0, answers:[], startTime:0, timer:null, secondsLeft:900, name:'', lastResult:null, leaderboard:JSON.parse(localStorage.getItem('leaderboard')||'[]') };
+
+    const el = (html) => { document.getElementById('app').innerHTML = html; bind(); };
+    const shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+
+    function getStoredName(){ return localStorage.getItem('username') || ''; }
+    function saveLeaderboardEntry(name, score){
+      const data = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+      data.push({ name, score, date: Date.now() });
+      data.sort((a,b)=>b.score-a.score);
+      localStorage.setItem('leaderboard', JSON.stringify(data.slice(0,10)));
+      state.leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
     }
-  </script>
 
+    function getRank(score){
+      if(score >= 18) return "Master Debugger 👑";
+      else if(score >= 15) return "Expert 🔥";
+      else if(score >= 10) return "Intermediate 🚀";
+      else return "Beginner 📚";
+    }
+
+    function getBadge(lang){ return LANGS.find(x=>x.key===lang)?.badge || 'No Badge'; }
+
+    function pickQuestions(lang, difficulty){
+      const bank = QUESTIONS[lang].map((x,i)=>({...x, id:i}));
+      let picked = shuffle(bank);
+      if(difficulty === 'easy') picked = picked.slice(0,20);
+      if(difficulty === 'medium') picked = picked.slice(0,20);
+      if(difficulty === 'hard') picked = picked.slice(0,20);
+      return picked.map(q=>({ ...q, o: shuffle(q.o), userAnswer:null }));
+    }
+
+    function renderHome(){
+      const savedName = getStoredName();
+      const leaderboard = state.leaderboard.length ? state.leaderboard : [{name:'Shravan',score:95},{name:'Rahul',score:90},{name:'Aman',score:85}];
+      el(`
+      <div class="min-h-screen flex items-center justify-center px-4 py-10">
+        <div class="max-w-6xl w-full">
+          <div class="glass rounded-3xl overflow-hidden">
+            <div class="grid md:grid-cols-2">
+              <div class="p-8 md:p-12">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-200 text-sm mb-6">
+                  <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                  CodeCrash Arena Pro
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black leading-tight">Practice coding tests in a <span class="text-sky-400">game-like arena</span></h1>
+                <p class="mt-5 text-slate-300 text-lg">Choose your language, difficulty, and get a full educational review after the quiz.</p>
+                <div class="mt-8 grid grid-cols-2 gap-4 text-sm">
+                  <div class="p-4 rounded-2xl bg-white/5 border border-white/10">Username System</div>
+                  <div class="p-4 rounded-2xl bg-white/5 border border-white/10">Leaderboard</div>
+                  <div class="p-4 rounded-2xl bg-white/5 border border-white/10">Badges</div>
+                  <div class="p-4 rounded-2xl bg-white/5 border border-white/10">Sound Effects</div>
+                </div>
+              </div>
+              <div class="p-8 md:p-12 bg-gradient-to-br from-slate-900/80 to-indigo-950/70 border-t md:border-t-0 md:border-l border-white/10">
+                <div class="mb-6">
+                  <h2 class="text-2xl font-bold">Enter Your Name</h2>
+                  <p class="text-slate-300 mt-2">Start with your username before selecting a language.</p>
+                </div>
+                <div class="space-y-4">
+                  <input id="usernameInput" value="${savedName}" placeholder="Shravan" class="w-full px-4 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-sky-400/60 transition text-white placeholder-slate-400" />
+                  <div class="grid grid-cols-3 gap-3">
+                    ${['easy','medium','hard'].map(d=>`
+                      <button onclick="setDifficulty('${d}')" class="difficultyBtn px-4 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition capitalize">${d}</button>
+                    `).join('')}
+                  </div>
+                  <div class="space-y-3">
+                    ${LANGS.map(l=>`
+                      <button onclick="startLang('${l.key}')" class="w-full text-left p-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-sky-500/15 hover:border-sky-400/40 transition duration-300 pulse">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <div class="font-semibold text-lg">${l.name}</div>
+                            <div class="text-slate-300 text-sm mt-1">${l.desc}</div>
+                          </div>
+                          <div class="text-sky-300 font-bold">Start</div>
+                        </div>
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6 mt-6">
+            <div class="glass rounded-3xl p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold">🏆 Top Players</h3>
+                <span class="text-xs text-slate-400">Includes new members who take tests</span>
+              </div>
+              <div class="space-y-3 text-sm">
+                ${leaderboard.slice(0,6).map((p,i)=>`
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-200 font-bold">${i+1}</div>
+                      <div>
+                        <div class="font-medium">${p.name}</div>
+                        <div class="text-slate-400 text-xs">Member on leaderboard</div>
+                      </div>
+                    </div>
+                    <div class="font-bold text-sky-300">${p.score}%</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            <div class="glass rounded-3xl p-6">
+              <h3 class="text-xl font-bold mb-4">Badges</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                ${LANGS.map(l=>`<div class="p-4 rounded-2xl bg-white/5 border border-white/10">${l.badge}</div>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`);
+    }
+
+    function setDifficulty(d){ localStorage.setItem('difficulty', d); }
+    function getDifficulty(){ return localStorage.getItem('difficulty') || 'easy'; }
+
+    function startLang(lang){
+      const name = (document.getElementById('usernameInput')?.value || getStoredName() || 'Shravan').trim() || 'Shravan';
+      localStorage.setItem("username", name);
+      state.name = name;
+      state.lang = lang;
+      state.questions = pickQuestions(lang, getDifficulty());
+      state.answers = Array(20).fill(null);
+      state.current = 0;
+      state.secondsLeft = 15*60;
+      state.startTime = Date.now();
+      clearInterval(state.timer);
+      state.timer = setInterval(()=>{ state.secondsLeft--; updateTimer(); if(state.secondsLeft<=0) finishQuiz(); },1000);
+      renderQuiz();
+    }
+
+    function renderQuiz(){
+      const q = state.questions[state.current];
+      const langName = LANGS.find(x=>x.key===state.lang).name;
+      const difficulty = getDifficulty();
+      const m = String(Math.floor(state.secondsLeft/60)).padStart(2,'0');
+      const s = String(state.secondsLeft%60).padStart(2,'0');
+      el(`
+      <div class="min-h-screen px-4 py-6">
+        <div class="max-w-6xl mx-auto">
+          <div class="glass rounded-3xl p-4 md:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
+            <div>
+              <div class="text-slate-300 text-sm">CodeCrash Arena Pro</div>
+              <div class="text-2xl font-bold">${langName} Test</div>
+              <div class="text-sky-300 text-sm mt-1">Welcome ${state.name}</div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="px-4 py-2 rounded-full bg-white/5 border border-white/10">Question ${state.current+1}/20</div>
+              <div class="px-4 py-2 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-200">Time Left: <span id="timer">${m}:${s}</span></div>
+              <div class="px-4 py-2 rounded-full bg-violet-500/15 border border-violet-400/30 text-violet-200 capitalize">${difficulty}</div>
+              <button onclick="finishQuiz()" class="px-4 py-2 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-100 hover:bg-rose-500/30 transition">Submit</button>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-[1.5fr_.8fr] gap-6">
+            <div class="glass rounded-3xl p-6 md:p-8 fade-in">
+              <div class="flex items-center justify-between mb-5">
+                <div class="text-slate-400 text-sm">Educational review included after submission.</div>
+                <div class="text-sky-300 text-sm font-medium">Fresh test content</div>
+              </div>
+              <h2 class="text-2xl md:text-3xl font-bold leading-snug">${q.q}</h2>
+              <div class="mt-6 space-y-3">
+                ${q.o.map((opt,idx)=>`
+                  <button onclick="choose(${idx})" class="option w-full text-left p-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition duration-300">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-sm">${String.fromCharCode(65+idx)}</div>
+                      <div>${opt}</div>
+                    </div>
+                  </button>
+                `).join('')}
+              </div>
+              <div class="mt-6 flex items-center justify-between gap-3">
+                <button onclick="prevQ()" class="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition">Previous</button>
+                <button onclick="nextQ()" class="px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold transition">Next</button>
+              </div>
+            </div>
+
+            <div class="glass rounded-3xl p-6">
+              <h3 class="font-bold text-lg">Progress</h3>
+              <div class="mt-4 grid grid-cols-5 gap-2">
+                ${state.questions.map((_,i)=>`<button onclick="gotoQ(${i})" class="qnav h-11 rounded-xl border border-white/10 ${i===state.current?'bg-sky-500 text-slate-950 font-bold':'bg-white/5'}">${i+1}</button>`).join('')}
+              </div>
+              <div class="mt-6 space-y-4 text-sm text-slate-300">
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10">Difficulty: ${difficulty === 'easy' ? 'basic syntax' : difficulty === 'medium' ? 'debugging' : 'logic and output prediction'}</div>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10">Correct answer = ✅ Ding</div>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10">Wrong answer = ❌ Buzz</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`);
+      highlightSelected();
+    }
+
+    function choose(idx){ state.answers[state.current] = idx; playSound(idx === state.questions[state.current].a); highlightSelected(); }
+    function playSound(isCorrect){ try{ new Audio(isCorrect ? "correct.mp3" : "wrong.mp3").play(); }catch(e){} }
+    function highlightSelected(){
+      document.querySelectorAll('.option').forEach((b,i)=>{
+        b.classList.remove('selected');
+        if(state.answers[state.current]===i) b.classList.add('selected');
+      });
+    }
+    function prevQ(){ if(state.current>0){ state.current--; renderQuiz(); } }
+    function nextQ(){ if(state.current<19){ state.current++; renderQuiz(); } else finishQuiz(); }
+    function gotoQ(i){ state.current=i; renderQuiz(); }
+    function updateTimer(){ const t=document.getElementById('timer'); if(t){ t.textContent = `${String(Math.floor(state.secondsLeft/60)).padStart(2,'0')}:${String(state.secondsLeft%60).padStart(2,'0')}`; } }
+
+    function finishQuiz(){
+      clearInterval(state.timer);
+      let correct = 0;
+      state.questions.forEach((q,i)=>{ if(state.answers[i]===q.a) correct++; });
+      const total = state.questions.length;
+      const accuracy = Math.round((correct/total)*100);
+      const performance = Math.max(0, Math.min(100, Math.round((accuracy*0.7) + (correct*1.5))));
+      const rank = getRank(correct);
+      state.lastResult = { correct, wrong: total-correct, accuracy, performance, total, rank };
+      saveLeaderboardEntry(state.name || 'Shravan', accuracy);
+      renderResult();
+    }
+
+    function renderResult(){
+      const r = state.lastResult;
+      const langName = LANGS.find(x=>x.key===state.lang).name;
+      const review = state.questions.map((q,i)=>{
+        const ua = state.answers[i];
+        const ca = q.a;
+        const isCorrect = ua === ca;
+        return `
+          <div class="p-4 rounded-2xl border ${isCorrect ? 'border-emerald-400/20 bg-emerald-500/10' : 'border-rose-400/20 bg-rose-500/10'}">
+            <div class="font-semibold">Question ${i+1}</div>
+            <div class="mt-2 text-sm text-slate-200">${q.q}</div>
+            <div class="mt-3 text-sm"><span class="text-slate-300">Your Answer:</span> <span class="font-medium">${ua === null ? 'Not answered' : q.o[ua]}</span></div>
+            <div class="mt-1 text-sm"><span class="text-slate-300">Correct Answer:</span> <span class="font-medium">${q.o[ca]}</span></div>
+            <div class="mt-2 text-sm text-slate-300">Explanation: ${q.e}</div>
+          </div>`;
+      }).join('');
+
+      const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+
+      el(`
+      <div class="min-h-screen px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+          <div class="glass rounded-3xl p-6 md:p-8 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div class="text-slate-400 text-sm">Test Completed</div>
+              <h1 class="text-3xl md:text-4xl font-black">Welcome ${state.name}</h1>
+              <div class="text-sky-300 mt-1">Rank: ${r.rank}</div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="renderHome()" class="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition">Back to Home</button>
+              <button onclick="startLang(state.lang)" class="px-4 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold transition">Retake Test</button>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-[.9fr_1.1fr] gap-6">
+            <div class="glass rounded-3xl p-6 md:p-8">
+              <h2 class="text-2xl font-bold mb-5">Performance Summary</h2>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-400/20">
+                  <div class="text-emerald-300 text-sm">Correct</div>
+                  <div class="text-3xl font-black">${r.correct}</div>
+                </div>
+                <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-400/20">
+                  <div class="text-rose-300 text-sm">Wrong</div>
+                  <div class="text-3xl font-black">${r.wrong}</div>
+                </div>
+                <div class="p-4 rounded-2xl bg-sky-500/10 border border-sky-400/20">
+                  <div class="text-sky-300 text-sm">Accuracy</div>
+                  <div class="text-3xl font-black">${r.accuracy}%</div>
+                </div>
+                <div class="p-4 rounded-2xl bg-violet-500/10 border border-violet-400/20">
+                  <div class="text-violet-300 text-sm">Performance</div>
+                  <div class="text-3xl font-black">${r.performance}%</div>
+                </div>
+              </div>
+              <div class="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10">
+                <div class="text-slate-300 text-sm">Badge Earned</div>
+                <div class="font-semibold mt-1">${getBadge(state.lang)}</div>
+              </div>
+              <div class="mt-4 text-slate-300 text-sm leading-6">
+                Stored username: <span class="text-white font-semibold">${localStorage.getItem('username') || 'Shravan'}</span>
+              </div>
+            </div>
+
+            <div class="glass rounded-3xl p-6 md:p-8">
+              <h2 class="text-2xl font-bold mb-4">Accuracy Graph</h2>
+              <div id="chart" class="bg-white/5 rounded-2xl p-3"></div>
+            </div>
+          </div>
+
+          <div class="glass rounded-3xl p-6 md:p-8 mt-6">
+            <h2 class="text-2xl font-bold mb-5">Correct Answer Review</h2>
+            <div class="grid md:grid-cols-2 gap-4">${review}</div>
+          </div>
+
+          <div class="glass rounded-3xl p-6 md:p-8 mt-6">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-2xl font-bold">🏆 Leaderboard</h2>
+              <span class="text-sm text-slate-400">New member is added automatically after every test</span>
+            </div>
+            <div class="space-y-3">
+              ${(leaderboard.length ? leaderboard : [{name:'Shravan',score:95},{name:'Rahul',score:90},{name:'Aman',score:85}]).slice(0,10).map((p,i)=>`
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-200 font-bold">${i+1}</div>
+                    <div>
+                      <div class="font-medium">${p.name}</div>
+                      <div class="text-xs text-slate-400">Test member</div>
+                    </div>
+                  </div>
+                  <div class="font-bold text-sky-300">${p.score}%</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>`);
+      setTimeout(()=> {
+        new ApexCharts(document.querySelector("#chart"), {
+          chart: { type: 'donut', height: 360, foreColor:'#cbd5e1' },
+          series: [r.correct, r.wrong],
+          labels: ['Correct', 'Wrong'],
+          colors: ['#22c55e', '#ef4444'],
+          legend: { position: 'bottom' },
+          stroke: { width: 0 },
+          dataLabels: { enabled: true },
+          plotOptions: { pie: { donut: { size: '72%' } } }
+        }).render();
+      }, 50);
+    }
+
+    function bind(){}
+    renderHome();
+  </script>
 </body>
 </html>
