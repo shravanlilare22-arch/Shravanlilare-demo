@@ -32,9 +32,19 @@ This project helps beginners practice debugging and improve coding logic.
 
 ## 📂 Project Structure
 
-```text
-CodeCrash-Arena/
+CodeCrash-Arena-Pro
 │
 ├── index.html
-├── README.md
-└── screenshots/
+├── quiz.html
+├── result.html
+│
+├── css
+│   └── style.css
+│
+├── js
+│   ├── questions.js
+│   ├── app.js
+│   ├── quiz.js
+│   └── result.js
+│
+└── assets
