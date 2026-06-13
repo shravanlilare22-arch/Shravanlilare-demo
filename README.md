@@ -24,27 +24,20 @@ This project helps beginners practice debugging and improve coding logic.
 
 ## 🛠️ Technologies Used
 
-- HTML5
-- CSS3
-- JavaScript
+- HTML 1
+- CSS
+- JavaScript 3
 
 ---
 
 ## 📂 Project Structure
 
-CodeCrash-Arena-Pro
+Shravanlilare-demo
 │
 ├── index.html
-├── quiz.html
-├── result.html
+├── style.css
 │
-├── css
-│   └── style.css
-│
-├── js
-│   ├── questions.js
-│   ├── app.js
-│   ├── quiz.js
-│   └── result.js
-│
-└── assets
+└── data
+    ├── app.js
+    ├── quiz.js
+    └── questions.js
