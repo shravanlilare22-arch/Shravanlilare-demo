@@ -4,152 +4,166 @@ let currentLanguage = "";
 let currentQuestions = [];
 let currentQuestion = 0;
 let score = 0;
-let timer = 600;
+let timer = 300;
 let timerInterval = null;
 
 function startQuiz(language) {
 
-    if (!QUESTIONS[language]) {
-        alert("Questions not found for " + language);
-        return;
-    }
 
-    currentLanguage = language;
-    currentQuestions = [...QUESTIONS[language]];
-    currefunctionntQuestion = 0;
-    score = 0;
-    timer = 600;
+if (user.name === "Guest") {
+    alert("Please enter your name first!");
+    return;
+}
 
-    renderQuiz();
-    startTimer();
+if (!QUESTIONS[language]) {
+    alert("Questions not found for " + language);
+    return;
+}
+
+currentLanguage = language;
+currentQuestions = [...QUESTIONS[language]];
+currentQuestion = 0;
+score = 0;
+timer = 300;
+
+renderQuiz();
+startTimer();
+
+
 }
 
 function renderQuiz() {
 
-    let q = currentQuestions[currentQuestion];
 
-    document.body.innerHTML = `
-    <div class="quiz-container" style="max-width:900px;margin:30px auto;padding:20px;">
+let q = currentQuestions[currentQuestion];
 
-        <h1>${currentLanguage.toUpperCase()} QUIZ</h1>
+document.body.innerHTML = `
+<div class="quiz-container" style="max-width:900px;margin:30px auto;padding:20px;">
 
-        <div id="timer" style="font-size:20px;margin-bottom:15px;">
-            Time Left : ${timer}s
-        </div>
+    <h1>${currentLanguage.toUpperCase()} QUIZ</h1>
 
-        <h2>
-            Question ${currentQuestion + 1} of ${currentQuestions.length}
-        </h2>
+    <div id="timer" style="font-size:20px;margin-bottom:15px;">
+        Time Left : ${timer}s
+    </div>
 
-        <p style="font-size:20px;">
-            ${q.q}
-        </p>
+    <h2>
+        Question ${currentQuestion + 1} of ${currentQuestions.length}
+    </h2>
 
-        <div class="options">
+    <p style="font-size:20px;">
+        ${q.q}
+    </p>
 
-            ${q.o.map((opt,index)=>`
-                <button
-                    class="option-btn"
-                    onclick="checkAnswer(${index})"
-                    style="
-                        display:block;
-                        width:100%;
-                        padding:15px;
-                        margin:10px 0;
-                        cursor:pointer;
-                        font-size:16px;
-                    ">
-                    ${opt}
-                </button>
-            `).join("")}
+    <div class="options">
 
-        </div>
-
-        <div id="result" style="margin-top:15px;"></div>
-
-        <div style="margin-top:20px;">
-
+        ${q.o.map((opt,index)=>`
             <button
-                id="nextBtn"
-                onclick="nextQuestion()"
+                class="option-btn"
+                onclick="checkAnswer(${index})"
                 style="
-                    display:none;
-                    padding:12px 20px;
+                    display:block;
+                    width:100%;
+                    padding:15px;
+                    margin:10px 0;
                     cursor:pointer;
+                    font-size:16px;
                 ">
-                Next Question
+                ${opt}
             </button>
-
-            <button
-                onclick="finishQuiz()"
-                style="
-                    padding:12px 20px;
-                    cursor:pointer;
-                    margin-left:10px;
-                ">
-                Submit Quiz
-            </button>
-
-        </div>
+        `).join("")}
 
     </div>
-    `;
+
+    <div id="result" style="margin-top:15px;"></div>
+
+    <div style="margin-top:20px;">
+
+        <button
+            id="nextBtn"
+            onclick="nextQuestion()"
+            style="
+                display:none;
+                padding:12px 20px;
+                cursor:pointer;
+            ">
+            Next Question
+        </button>
+
+        <button
+            onclick="finishQuiz()"
+            style="
+                padding:12px 20px;
+                cursor:pointer;
+                margin-left:10px;
+            ">
+            Submit Quiz
+        </button>
+
+    </div>
+
+</div>
+`;
+
+
 }
 
 function checkAnswer(selected) {
 
-    let q = currentQuestions[currentQuestion];
 
-    let buttons =
-        document.querySelectorAll(".option-btn");
+let q = currentQuestions[currentQuestion];
 
-    buttons.forEach(btn => {
-        btn.disabled = true;
-    });
+let buttons = document.querySelectorAll(".option-btn");
 
-    if (selected === q.a) {
+buttons.forEach(btn => {
+    btn.disabled = true;
+});
 
-        score++;
+if (selected === q.a) {
 
-        buttons[selected].style.background =
-            "#22c55e";
+    score++;
 
-        document.getElementById("result").innerHTML =
-            `<h3>✅ Correct Answer</h3>
-             <p>${q.e}</p>`;
+    buttons[selected].style.background = "#22c55e";
 
-    } else {
+    document.getElementById("result").innerHTML =
+    `
+    <h3>✅ Correct Answer</h3>
+    <p>${q.e}</p>
+    `;
 
-        buttons[selected].style.background =
-            "#ef4444";
+} else {
 
-        buttons[q.a].style.background =
-            "#22c55e";
+    buttons[selected].style.background = "#ef4444";
+    buttons[q.a].style.background = "#22c55e";
 
-        document.getElementById("result").innerHTML =
-            `<h3>❌ Wrong Answer</h3>
-             <p>${q.e}</p>`;
-    }
+    document.getElementById("result").innerHTML =
+    `
+    <h3>❌ Wrong Answer</h3>
+    <p>${q.e}</p>
+    `;
+}
 
-    document.getElementById("nextBtn")
-        .style.display = "inline-block";
+document.getElementById("nextBtn").style.display = "inline-block";
+
+
 }
 
 function nextQuestion() {
 
-    currentQuestion++;
 
-    if (currentQuestion >= currentQuestions.length) {
-        finishQuiz();
-        return;
-    }
+currentQuestion++;
 
-    renderQuiz();
+if (currentQuestion >= currentQuestions.length) {
+    finishQuiz();
+    return;
 }
+
+renderQuiz();
+
+
+}
+
 function finishQuiz() {
 
-
-alert("finishQuiz called");
 
 clearInterval(timerInterval);
 
@@ -157,20 +171,29 @@ let percent = Math.round(
     (score / currentQuestions.length) * 100
 );
 
-if (typeof user !== "undefined") {
+if (!user.quizzesPlayed) user.quizzesPlayed = 0;
+if (!user.totalScore) user.totalScore = 0;
+if (!user.averageScore) user.averageScore = 0;
 
-    user.xp += score * 10;
+user.quizzesPlayed++;
+user.totalScore += percent;
 
-    user.badges += Math.floor(score / 5);
+user.averageScore =
+    Math.round(
+        user.totalScore / user.quizzesPlayed
+    );
 
-    if (user.xp >= user.level * 100) {
-        user.level++;
-    }
+user.xp += score * 10;
 
-    saveUser();
-
-    console.log("User Saved:", user);
+if (score >= 8) {
+    user.badges++;
 }
+
+while (user.xp >= user.level * 100) {
+    user.level++;
+}
+
+saveUser();
 
 document.body.innerHTML = `
 <div style="padding:50px;text-align:center;">
@@ -180,6 +203,12 @@ document.body.innerHTML = `
     <h2>Score: ${score}/${currentQuestions.length}</h2>
 
     <h2>Percentage: ${percent}%</h2>
+
+    <h2>XP: ${user.xp}</h2>
+
+    <h2>Level: ${user.level}</h2>
+
+    <h2>Badges: ${user.badges}</h2>
 
     <button onclick="location.reload()">
         Back Home
@@ -193,23 +222,25 @@ document.body.innerHTML = `
 
 function startTimer() {
 
-    clearInterval(timerInterval);
 
-    timerInterval = setInterval(() => {
+clearInterval(timerInterval);
 
-        timer--;
+timerInterval = setInterval(() => {
 
-        let timerBox =
-            document.getElementById("timer");
+    timer--;
 
-        if (timerBox) {
-            timerBox.innerHTML =
-                "Time Left : " + timer + "s";
-        }
+    let timerBox = document.getElementById("timer");
 
-        if (timer <= 0) {
-            finishQuiz();
-        }
+    if (timerBox) {
+        timerBox.innerHTML =
+            "Time Left : " + timer + "s";
+    }
 
-    }, 1000);
+    if (timer <= 0) {
+        finishQuiz();
+    }
+
+}, 1000);
+
+
 }
