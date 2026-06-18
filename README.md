@@ -1,5 +1,5 @@
 # Shravanlilare-demo
-This is my first Git repository
+This is my first Git repository to Make a CodeCrash Arena 
 Author- shravan (apna college)
 To make a simple demo project using HTML.
 
