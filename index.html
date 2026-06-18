@@ -29,12 +29,7 @@
 
 <section class="hero">
 
-
-<h2>Master Coding Skills</h2>
-
-<p>
-    Practice Python, Java, C, C++, PHP and become a coding champion.
-</p>
+<h2>Student Sign In</h2>
 
 <input
     type="text"
@@ -43,9 +38,11 @@
 >
 
 <button onclick="saveName()">
-    Start Journey
+    Sign In
 </button>
-
+<button onclick="logoutUser()">
+    Logout
+</button>
 
 </section>
 
@@ -88,14 +85,51 @@
     <button class="lang-btn" onclick="startQuiz('php')">🌐 PHP</button>
 
 </div>
+<section class="enrollment-section">
 
+    <h2>User Enrollment</h2>
 
-</section>
+    <table id="enrollmentTable" border="1" width="100%">
+        <thead>
+            <tr>
+                 <th>Student Name</th>
+                 <th>Level</th>
+                 <th>XP</th>
+                 <th>Badges</th>
+                 <th>Quizzes Played</th>
+                 <th>Average Score</th>
+            </tr>
+        </thead>
 
-<section class="chart-section">
-<h2>Your Progress</h2>
+        <tbody id="enrollmentBody">
 
-<div id="chart"></div>
+        </tbody>
+
+    </table> 
+     <button onclick="deleteCurrentStudent()"
+        style="
+        padding:10px 20px;
+        background:#dc2626;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        margin-top:10px;
+">
+Delete Current Student
+</button>
+    <button onclick="clearAllStudents()"
+     style="
+     padding:10px 20px;
+     background:red;
+     color:white;
+     border:none;
+     border-radius:8px;
+     cursor:pointer;
+     margin-top:15px;
+">
+Clear All Records
+</button>
 
 </section>
 

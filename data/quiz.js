@@ -9,238 +9,244 @@ let timerInterval = null;
 
 function startQuiz(language) {
 
+    if (!user || user.name === "Guest") {
+        alert("Please Sign In First!");
+        return;
+    }
 
-if (user.name === "Guest") {
-    alert("Please enter your name first!");
-    return;
-}
+    if (!QUESTIONS[language]) {
+        alert("Questions not found!");
+        return;
+    }
 
-if (!QUESTIONS[language]) {
-    alert("Questions not found for " + language);
-    return;
-}
+    currentLanguage = language;
+    currentQuestions = [...QUESTIONS[language]];
+    currentQuestion = 0;
+    score = 0;
+    timer = 300;
 
-currentLanguage = language;
-currentQuestions = [...QUESTIONS[language]];
-currentQuestion = 0;
-score = 0;
-timer = 300;
-
-renderQuiz();
-startTimer();
-
-
+    renderQuiz();
+    startTimer();
 }
 
 function renderQuiz() {
 
+    let q = currentQuestions[currentQuestion];
 
-let q = currentQuestions[currentQuestion];
+    document.body.innerHTML = `
+    <div class="quiz-container">
 
-document.body.innerHTML = `
-<div class="quiz-container" style="max-width:900px;margin:30px auto;padding:20px;">
+        <h1>${currentLanguage.toUpperCase()} QUIZ</h1>
 
-    <h1>${currentLanguage.toUpperCase()} QUIZ</h1>
+        <div id="timer">
+            ⏱ Time Left : ${timer}s
+        </div>
 
-    <div id="timer" style="font-size:20px;margin-bottom:15px;">
-        Time Left : ${timer}s
-    </div>
+        <h2>
+            Question ${currentQuestion + 1} of ${currentQuestions.length}
+        </h2>
 
-    <h2>
-        Question ${currentQuestion + 1} of ${currentQuestions.length}
-    </h2>
+        <p>${q.q}</p>
 
-    <p style="font-size:20px;">
-        ${q.q}
-    </p>
+        <div class="options">
 
-    <div class="options">
+            ${q.o.map((opt,index)=>`
+                <button
+                    class="option-btn"
+                    onclick="checkAnswer(${index})">
+                    ${opt}
+                </button>
+            `).join("")}
 
-        ${q.o.map((opt,index)=>`
-            <button
-                class="option-btn"
-                onclick="checkAnswer(${index})"
-                style="
-                    display:block;
-                    width:100%;
-                    padding:15px;
-                    margin:10px 0;
-                    cursor:pointer;
-                    font-size:16px;
-                ">
-                ${opt}
-            </button>
-        `).join("")}
+        </div>
 
-    </div>
-
-    <div id="result" style="margin-top:15px;"></div>
-
-    <div style="margin-top:20px;">
+        <div id="result"></div>
 
         <button
             id="nextBtn"
             onclick="nextQuestion()"
-            style="
-                display:none;
-                padding:12px 20px;
-                cursor:pointer;
-            ">
+            style="display:none;">
             Next Question
         </button>
 
-        <button
-            onclick="finishQuiz()"
-            style="
-                padding:12px 20px;
-                cursor:pointer;
-                margin-left:10px;
-            ">
+        <button onclick="finishQuiz()">
             Submit Quiz
         </button>
 
     </div>
-
-</div>
-`;
-
-
+    `;
 }
 
 function checkAnswer(selected) {
 
+    let q = currentQuestions[currentQuestion];
 
-let q = currentQuestions[currentQuestion];
+    let buttons =
+        document.querySelectorAll(".option-btn");
 
-let buttons = document.querySelectorAll(".option-btn");
+    buttons.forEach(btn => {
+        btn.disabled = true;
+    });
 
-buttons.forEach(btn => {
-    btn.disabled = true;
-});
+    if (selected === q.a) {
 
-if (selected === q.a) {
+        score++;
 
-    score++;
+        buttons[selected].style.background =
+            "#22c55e";
 
-    buttons[selected].style.background = "#22c55e";
+        document.getElementById("result").innerHTML =
+            `
+            <h3>✅ Correct Answer</h3>
+            <p>${q.e}</p>
+            `;
 
-    document.getElementById("result").innerHTML =
-    `
-    <h3>✅ Correct Answer</h3>
-    <p>${q.e}</p>
-    `;
+    } else {
 
-} else {
+        buttons[selected].style.background =
+            "#ef4444";
 
-    buttons[selected].style.background = "#ef4444";
-    buttons[q.a].style.background = "#22c55e";
+        buttons[q.a].style.background =
+            "#22c55e";
 
-    document.getElementById("result").innerHTML =
-    `
-    <h3>❌ Wrong Answer</h3>
-    <p>${q.e}</p>
-    `;
-}
+        document.getElementById("result").innerHTML =
+            `
+            <h3>❌ Wrong Answer</h3>
+            <p>${q.e}</p>
+            `;
+    }
 
-document.getElementById("nextBtn").style.display = "inline-block";
-
-
+    document.getElementById("nextBtn")
+        .style.display = "inline-block";
 }
 
 function nextQuestion() {
 
+    currentQuestion++;
 
-currentQuestion++;
+    if (currentQuestion >= currentQuestions.length) {
+        finishQuiz();
+        return;
+    }
 
-if (currentQuestion >= currentQuestions.length) {
-    finishQuiz();
-    return;
-}
-
-renderQuiz();
-
-
+    renderQuiz();
 }
 
 function finishQuiz() {
 
+    clearInterval(timerInterval);
 
-clearInterval(timerInterval);
-
-let percent = Math.round(
-    (score / currentQuestions.length) * 100
-);
-
-if (!user.quizzesPlayed) user.quizzesPlayed = 0;
-if (!user.totalScore) user.totalScore = 0;
-if (!user.averageScore) user.averageScore = 0;
-
-user.quizzesPlayed++;
-user.totalScore += percent;
-
-user.averageScore =
-    Math.round(
-        user.totalScore / user.quizzesPlayed
+    let percent = Math.round(
+        (score / currentQuestions.length) * 100
     );
 
-user.xp += score * 10;
+    user.quizzesPlayed =
+        (user.quizzesPlayed || 0) + 1;
 
-if (score >= 8) {
-    user.badges++;
+    user.totalScore =
+        (user.totalScore || 0) + percent;
+
+    user.averageScore =
+        Math.round(
+            user.totalScore /
+            user.quizzesPlayed
+        );
+
+    user.xp += score * 10;
+
+    if (score >= 8) {
+        user.badges++;
+    }
+
+    while (user.xp >= user.level * 100) {
+        user.level++;
+    }
+    let students =
+    JSON.parse(
+        localStorage.getItem("cca_students")
+    ) || [];
+
+let index =
+    students.findIndex(
+        s => s.name === user.name
+    );
+
+if(index !== -1){
+
+    students[index] = {
+        name:user.name,
+        xp:user.xp,
+        level:user.level,
+        badges:user.badges,
+        quizzesPlayed:user.quizzesPlayed,
+        averageScore:user.averageScore
+    };
+
+}else{
+
+    students.push({
+        name:user.name,
+        xp:user.xp,
+        level:user.level,
+        badges:user.badges,
+        quizzesPlayed:user.quizzesPlayed,
+        averageScore:user.averageScore
+    });
 }
 
-while (user.xp >= user.level * 100) {
-    user.level++;
-}
+localStorage.setItem(
+    "cca_students",
+    JSON.stringify(students)
+);
 
-saveUser();
+    saveUser();
 
-document.body.innerHTML = `
-<div style="padding:50px;text-align:center;">
+    document.body.innerHTML = `
+    <div style="padding:50px;text-align:center;">
 
-    <h1>🎉 Quiz Finished</h1>
+        <h1>🎉 Quiz Finished</h1>
 
-    <h2>Score: ${score}/${currentQuestions.length}</h2>
+        <h2>Score: ${score}/${currentQuestions.length}</h2>
 
-    <h2>Percentage: ${percent}%</h2>
+        <h2>Percentage: ${percent}%</h2>
 
-    <h2>XP: ${user.xp}</h2>
+        <hr style="margin:20px 0">
 
-    <h2>Level: ${user.level}</h2>
+        <h3>XP: ${user.xp}</h3>
 
-    <h2>Badges: ${user.badges}</h2>
+        <h3>Level: ${user.level}</h3>
 
-    <button onclick="location.reload()">
-        Back Home
-    </button>
+        <h3>Badges: ${user.badges}</h3>
 
-</div>
-`;
+        <h3>Average Score: ${user.averageScore}%</h3>
 
+        <button onclick="location.reload()">
+            Back Home
+        </button>
 
+    </div>
+    `;
 }
 
 function startTimer() {
 
+    clearInterval(timerInterval);
 
-clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
 
-timerInterval = setInterval(() => {
+        timer--;
 
-    timer--;
+        let timerBox =
+            document.getElementById("timer");
 
-    let timerBox = document.getElementById("timer");
+        if (timerBox) {
+            timerBox.innerHTML =
+                "⏱ Time Left : " + timer + "s";
+        }
 
-    if (timerBox) {
-        timerBox.innerHTML =
-            "Time Left : " + timer + "s";
-    }
+        if (timer <= 0) {
+            finishQuiz();
+        }
 
-    if (timer <= 0) {
-        finishQuiz();
-    }
-
-}, 1000);
-
-
+    }, 1000);
 }
