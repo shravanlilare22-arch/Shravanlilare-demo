@@ -15,7 +15,7 @@ function saveName() {
     let name =
         document.getElementById("playerName").value;
 
-    if(name.trim() === ""){
+    if (name.trim() === "") {
         alert("Enter Your Name");
         return;
     }
@@ -30,18 +30,18 @@ function saveName() {
     let exists =
         students.find(
             s => s.name.toLowerCase() ===
-            user.name.toLowerCase()
+                user.name.toLowerCase()
         );
 
-    if(!exists){
+    if (!exists) {
 
         students.push({
-            name:user.name,
-            xp:0,
-            level:1,
-            badges:0,
-            quizzesPlayed:0,
-            averageScore:0
+            name: user.name,
+            xp: 0,
+            level: 1,
+            badges: 0,
+            quizzesPlayed: 0,
+            averageScore: 0
         });
 
         localStorage.setItem(
@@ -148,23 +148,36 @@ function saveUser() {
 
 function loadUser() {
 
-    let data =
-        localStorage.getItem("cca_user");
+    // Login page se current user load karo
+    let currentUser =
+        localStorage.getItem("cca_current_user");
 
-    if (data) {
+    if (currentUser) {
 
-        user =
-            JSON.parse(data);
+        user = JSON.parse(currentUser);
 
-        user.quizzesPlayed =
-            user.quizzesPlayed || 0;
+        // app compatibility ke liye save bhi kar do
+        localStorage.setItem(
+            "cca_user",
+            JSON.stringify(user)
+        );
 
-        user.totalScore =
-            user.totalScore || 0;
+    } else {
 
-        user.averageScore =
-            user.averageScore || 0;
+        let data =
+            localStorage.getItem("cca_user");
+
+        if (data) {
+
+            user = JSON.parse(data);
+
+        }
+
     }
+
+    user.quizzesPlayed = user.quizzesPlayed || 0;
+    user.totalScore = user.totalScore || 0;
+    user.averageScore = user.averageScore || 0;
 
     updateUI();
     updateEnrollment();
@@ -202,12 +215,14 @@ function resetUser() {
 function logoutUser() {
 
     localStorage.removeItem("cca_user");
+    localStorage.removeItem("cca_current_user");
 
-    location.reload();
+    window.location.href = "login.html";
+
 }
 function deleteCurrentStudent() {
 
-    if(user.name === "Guest"){
+    if (user.name === "Guest") {
         alert("No student selected");
         return;
     }
@@ -248,11 +263,14 @@ window.onload = function () {
 };
 function clearAllStudents() {
 
-    if(confirm("Delete all student records?")){
+    if (confirm("Delete all student records?")) {
 
         localStorage.removeItem("cca_students");
         localStorage.removeItem("cca_user");
+        localStorage.removeItem("cca_current_user");
+        localStorage.removeItem("cca_users");
 
         location.reload();
     }
-}
+
+}s

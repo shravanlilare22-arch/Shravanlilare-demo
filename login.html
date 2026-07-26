@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CODEX LEARNING ARENA | Login</title>
+
+    <link rel="stylesheet" href="login.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- Background -->
+    <div class="background"></div>
+
+    <!-- Dark Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- LEFT SIDE -->
+        <div class="left-panel">
+
+            <h1>CODEX</h1>
+
+            <h2>LEARNING<br>ARENA</h2>
+
+            <p>
+                Learn Programming.<br>
+                Practice Coding.<br>
+                Improve Debugging Skills.
+            </p>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="right-panel">
+            <!-- Login Card -->
+
+            <div class="login-card" id="loginArea">
+
+                <div class="logo">
+
+                    <i class="fa-solid fa-graduation-cap"></i>
+
+                    <h2>Welcome Back</h2>
+
+                    <p>Sign in to continue your learning journey.</p>
+
+                </div>
+
+                <!-- Email -->
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                    <input type="email" id="email" placeholder="Enter Email Address" autocomplete="email" required>
+
+                </div>
+
+                <!-- Password -->
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input type="password" id="password" placeholder="Enter Password" autocomplete="current-password"
+                        required>
+
+                    <i class="fa-solid fa-eye" id="togglePassword" onclick="togglePassword()"></i>
+
+                </div>
+
+                <!-- Remember -->
+
+                <div class="remember">
+
+                    <label>
+
+                        <input type="checkbox" id="rememberMe">
+
+                        Remember Me
+
+                    </label>
+
+                    <a href="javascript:void(0)">
+                        Forgot Password?
+                    </a>
+
+                </div>
+
+                <!-- Login Button -->
+
+                <button class="login-btn" onclick="loginUser()">
+
+                    <i class="fa-solid fa-right-to-bracket"></i>
+
+                    Login
+
+                </button>
+
+                <!-- Divider -->
+
+                <div class="divider">
+
+                    <span>OR</span>
+
+                </div>
+
+                <!-- Create Account -->
+
+                <div class="register">
+
+                    Don't have an account?
+
+                    <a href="javascript:void(0)" onclick="openRegister()">
+
+                        Create Account
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- Floating Glow Effects -->
+
+        <div class="circle circle1"></div>
+
+        <div class="circle circle2"></div>
+
+        <div class="circle circle3"></div>
+
+        <div class="circle circle4"></div>
+
+        <!-- Bottom Text -->
+
+        <div class="footer-text">
+
+            <h3>CODEX LEARNING ARENA</h3>
+
+            <p>
+                Learn • Practice • Crack Interviews • Become a Developer
+            </p>
+
+        </div>
+
+    </div>
+    <!-- End Right Panel -->
+
+
+    </div>
+    <!-- End Container -->
+
+
+    <!-- Loader -->
+
+    <div id="loader">
+
+        <div class="loader-circle"></div>
+
+    </div>
+
+
+    <!-- Background Music (Optional) -->
+
+    <!-- <audio id="clickSound">
+
+        <source src="assets/click.mp3" type="audio/mpeg">
+
+    </audio> -->
+
+
+    <!-- JavaScript -->
+
+    <script src="data/login.js"></script>
+    <!-- Create Account Modal -->
+
+    <div id="registerModal" class="modal">
+
+        <div class="modal-content">
+
+            <span class="close" onclick="closeRegister()">
+                &times;
+            </span>
+
+            <h2>Create Account</h2>
+
+            <input type="text" id="newUsername" placeholder="Full Name">
+
+            <input type="email" id="newEmail" placeholder="Email Address">
+
+            <input type="password" id="newPassword" placeholder="Password">
+
+            <button class="register-btn" onclick="createAccount()">
+
+                Create Account
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+
+        <p>
+
+            © 2026 CODEX LEARNING ARENA
+
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

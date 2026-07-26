@@ -3,7 +3,7 @@ This is my first Git repository to Make a CodeCrash Arena
 Author- shravan (apna college)
 To make a simple demo project using HTML.
 
-# CodeCrash Arena 🚀
+# Codex Learning Arena 🚀
 
 A simple interactive bug-finding project made using HTML, CSS, and JavaScript.
 

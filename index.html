@@ -1,141 +1,92 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CodeCrash Arena Ultimate</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CODEX LEARNING ARENA</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body>
 
-<div class="background"></div>
+    <div class="background"></div>
 
-<header class="navbar">
-    <h1>⚡ CodeCrash Arena Ultimate</h1>
-
-
-<div class="user-box">
-    <span id="username">Guest</span>
-    <span id="level">Level 1</span>
-</div>
+    <header class="navbar">
+        <h1>⚡ CODEX LEARNING ARENA</h1>
 
 
-</header>
-
-<section class="hero">
-
-<h2>Student Sign In</h2>
-
-<input
-    type="text"
-    id="playerName"
-    placeholder="Enter Your Name"
->
-
-<button onclick="saveName()">
-    Sign In
-</button>
-<button onclick="logoutUser()">
-    Logout
-</button>
-
-</section>
-
-<section class="stats">
+        <div class="user-box">
+            <span id="username">Guest</span>
+            <span id="level">Level 1</span>
+        </div>
 
 
-<div class="card">
-    <h3>XP</h3>
-    <h1 id="xp">0</h1>
-</div>
+    </header>
 
-<div class="card">
-    <h3>Level</h3>
-    <h1 id="levelDisplay">1</h1>
-</div>
-
-<div class="card">
-    <h3>Badges</h3>
-    <h1 id="badges">0</h1>
-</div>
+    <section class="stats">
 
 
-</section>
+        <div class="card">
+            <h3>XP</h3>
+            <h1 id="xp">0</h1>
+        </div>
 
-<section class="languages">
+        <div class="card">
+            <h3>Level</h3>
+            <h1 id="levelDisplay">1</h1>
+        </div>
+
+        <div class="card">
+            <h3>Badges</h3>
+            <h1 id="badges">0</h1>
+        </div>
 
 
-<h2>Select Language</h2>
+    </section>
 
-<div class="lang-grid">
+    <section class="languages">
 
-    <button class="lang-btn" onclick="startQuiz('python')">🐍 Python</button>
 
-    <button class="lang-btn" onclick="startQuiz('java')">☕ Java</button>
+        <h2>Select Language</h2>
 
-    <button class="lang-btn" onclick="startQuiz('cpp')">⚡ C++</button>
+        <div class="lang-grid">
 
-    <button class="lang-btn" onclick="startQuiz('c')">🔷 C</button>
+            <button class="lang-btn" onclick="startQuiz('python')">🐍 Python</button>
 
-    <button class="lang-btn" onclick="startQuiz('php')">🌐 PHP</button>
+            <button class="lang-btn" onclick="startQuiz('java')">☕ Java</button>
 
-</div>
-<section class="enrollment-section">
+            <button class="lang-btn" onclick="startQuiz('cpp')">⚡ C++</button>
 
-    <h2>User Enrollment</h2>
+            <button class="lang-btn" onclick="startQuiz('c')">🔷 C</button>
 
-    <table id="enrollmentTable" border="1" width="100%">
-        <thead>
-            <tr>
-                 <th>Student Name</th>
-                 <th>Level</th>
-                 <th>XP</th>
-                 <th>Badges</th>
-                 <th>Quizzes Played</th>
-                 <th>Average Score</th>
-            </tr>
-        </thead>
+            <button class="lang-btn" onclick="startQuiz('php')">🌐 PHP</button>
 
-        <tbody id="enrollmentBody">
+        </div>
 
-        </tbody>
+       
+        <script>
 
-    </table> 
-     <button onclick="deleteCurrentStudent()"
-        style="
-        padding:10px 20px;
-        background:#dc2626;
-        color:white;
-        border:none;
-        border-radius:8px;
-        cursor:pointer;
-        margin-top:10px;
-">
-Delete Current Student
-</button>
-    <button onclick="clearAllStudents()"
-     style="
-     padding:10px 20px;
-     background:rgb(237, 25, 25);
-     color:white;
-     border:none;
-     border-radius:8px;
-     cursor:pointer;
-     margin-top:15px;
-">
-Clear All Records
-</button>
+            const currentUser = localStorage.getItem("cca_current_user");
 
-</section>
+            if (!currentUser) {
 
-<script src="./data/questions.js"></script>
-<script src="./data/app.js"></script>
-<script src="./data/quiz.js"></script>
+                window.location.href = "login.html";
+
+            }
+
+        </script>
+
+
+        <script src="./data/questions.js"></script>
+        <script src="./data/app.js"></script>
+        <script src="./data/quiz.js"></script>
+
 
 </body>
+
 </html>
