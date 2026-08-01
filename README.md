@@ -33,11 +33,38 @@ This project helps beginners practice debugging and improve coding logic.
 ## 📂 Project Structure
 
 Shravanlilare-demo
-│
-├── index.html
-├── style.css
-│
-└── data
-    ├── app.js
-    ├── quiz.js
-    └── questions.js
+
+CODEX
+
+<!-- login.html
+index.html
+
+practice.html
+courses.html
+analytics.html
+leaderboard.html
+profile.html
+
+css/
+    style.css
+    practice.css
+    courses.css
+    analytics.css
+    leaderboard.css
+    profile.css
+
+js/
+    app.js
+    practice.js
+    course.js
+    analytics.js
+    leaderboard.js
+    profile.js
+
+data/
+    questions.js
+
+assets/
+    images/
+    icons/
+    sounds/ -->

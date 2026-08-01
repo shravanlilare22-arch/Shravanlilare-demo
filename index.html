@@ -1,91 +1,178 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>CODEX LEARNING ARENA</title>
+
     <link rel="icon" href="data:,">
+
     <link rel="stylesheet" href="style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 </head>
 
 <body>
 
-    <div class="background"></div>
+    <!-- Sidebar -->
 
-    <header class="navbar">
-        <h1>⚡ CODEX LEARNING ARENA</h1>
+    <div class="sidebar">
 
+        <div class="logo">
 
-        <div class="user-box">
-            <span id="username">Guest</span>
-            <span id="level">Level 1</span>
-        </div>
+            <h2>CODEX</h2>
 
-
-    </header>
-
-    <section class="stats">
-
-
-        <div class="card">
-            <h3>XP</h3>
-            <h1 id="xp">0</h1>
-        </div>
-
-        <div class="card">
-            <h3>Level</h3>
-            <h1 id="levelDisplay">1</h1>
-        </div>
-
-        <div class="card">
-            <h3>Badges</h3>
-            <h1 id="badges">0</h1>
-        </div>
-
-
-    </section>
-
-    <section class="languages">
-
-
-        <h2>Select Language</h2>
-
-        <div class="lang-grid">
-
-            <button class="lang-btn" onclick="startQuiz('python')">🐍 Python</button>
-
-            <button class="lang-btn" onclick="startQuiz('java')">☕ Java</button>
-
-            <button class="lang-btn" onclick="startQuiz('cpp')">⚡ C++</button>
-
-            <button class="lang-btn" onclick="startQuiz('c')">🔷 C</button>
-
-            <button class="lang-btn" onclick="startQuiz('php')">🌐 PHP</button>
+            <span>Learning Arena</span>
 
         </div>
 
-       
-        <script>
+        <ul class="menu">
 
-            const currentUser = localStorage.getItem("cca_current_user");
+            <li class="active">
+                🏠 Dashboard
+            </li>
 
-            if (!currentUser) {
+            <li>
+                💻 Practice
+            </li>
 
-                window.location.href = "login.html";
+            <li>
+                📚 Courses
+            </li>
 
-            }
+            <li>
+                📊 Analytics
+            </li>
 
-        </script>
+            <li>
+                🏆 Leaderboard
+            </li>
 
+            <li>
+                👤 Profile
+            </li>
 
-        <script src="./data/questions.js"></script>
-        <script src="./data/app.js"></script>
-        <script src="./data/quiz.js"></script>
+            <li onclick="logoutUser()">
+                🚪 Logout
+            </li>
 
+        </ul>
+
+    </div>
+
+    <!-- Main Content -->
+
+    <div class="main-content">
+
+        <div class="background"></div>
+
+        <!-- Navbar -->
+
+        <header class="navbar">
+
+            <h1>⚡ CODEX LEARNING ARENA</h1>
+
+            <div class="user-box">
+
+                <span id="username">Guest</span>
+
+                <span id="level">Level 1</span>
+
+            </div>
+
+        </header>
+
+        <!-- Stats -->
+
+        <section class="stats">
+
+            <div class="card">
+
+                <h3>XP</h3>
+
+                <h1 id="xp">0</h1>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Level</h3>
+
+                <h1 id="levelDisplay">1</h1>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Badges</h3>
+
+                <h1 id="badges">0</h1>
+
+            </div>
+
+        </section>
+
+        <!-- Languages -->
+
+        <section class="languages">
+
+            <h2>Select Language</h2>
+
+            <div class="lang-grid">
+
+                <button class="lang-btn" onclick="startQuiz('python')">
+                    🐍 Python
+                </button>
+
+                <button class="lang-btn" onclick="startQuiz('java')">
+                    ☕ Java
+                </button>
+
+                <button class="lang-btn" onclick="startQuiz('cpp')">
+                    ⚡ C++
+                </button>
+
+                <button class="lang-btn" onclick="startQuiz('c')">
+                    🔷 C
+                </button>
+
+                <button class="lang-btn" onclick="startQuiz('php')">
+                    🌐 PHP
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Login Check -->
+
+    <script>
+
+        const currentUser =
+            localStorage.getItem("cca_current_user");
+
+        if (!currentUser) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    </script>
+
+    <!-- JavaScript -->
+
+    <script src="./data/questions.js"></script>
+
+    <script src="./data/app.js"></script>
+
+    <script src="./data/quiz.js"></script>
 
 </body>
 
